@@ -320,8 +320,11 @@ impl Watch {
             command_start: Instant::now(),
         };
 
+        let config = notify::Config::default()
+            .with_poll_interval(Duration::from_secs(2));
+
         let mut watcher =
-            notify::recommended_watcher(handler).context("could not initialize watcher")?;
+            notify::poll::PollWatcher::new(handler, config).context("could not initialize watcher")?;
 
         for path in &self.watch_paths {
             match watcher.watch(path, RecursiveMode::Recursive) {
